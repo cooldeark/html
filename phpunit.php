@@ -35,10 +35,25 @@ date_default_timezone_set('UTC');
  * Prepare the db connection (spoofing that shit)
  */
 $capsule = new Capsule;
+// for sqlite database
+// $capsule->addConnection([
+//   'driver'   => 'sqlite',
+//   'database' => ':memory:',
+// ]);
+
+// for psql database
 $capsule->addConnection([
-  'driver'   => 'sqlite',
-  'database' => ':memory:',
+  'driver'   => 'pgsql',
+  'host'     => '127.0.0.1',
+  'database' => 'test_db',
+  'username' => 'test_user',
+  'password' => 'test_password',
+  'charset'  => 'utf8',
+  'collation'=> 'utf8_unicode_ci',
+  'prefix'   => '',
+  'schema'   => 'public',
 ]);
+
 $capsule->setEventDispatcher(new Dispatcher);
 $capsule->setAsGlobal();
 $capsule->bootEloquent();

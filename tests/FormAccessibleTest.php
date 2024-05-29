@@ -14,9 +14,41 @@ use Mockery as m;
 
 class FormAccessibleTest extends PHPUnit\Framework\TestCase
 {
+
+    protected function setUpDatabase()
+    {
+        $capsule = new Capsule;
+        $capsule->addConnection([
+            'driver' => 'pgsql',
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'database' => env('DB_DATABASE', 'test_db'),
+            'username' => env('DB_USERNAME', 'test_user'),
+            'password' => env('DB_PASSWORD', 'test_password'),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'schema' => 'public',
+        ]);
+        $capsule->setAsGlobal();
+        $capsule->bootEloquent();
+
+        // Migrate the database
+        Capsule::schema()->dropIfExists('models');
+        Capsule::schema()->create('models', function ($table) {
+            $table->id();
+            $table->string('string');
+            $table->string('email');
+            $table->json('address');
+            $table->json('array');
+            $table->string('transform_key');
+            $table->timestamps();
+        });
+    }
+
     protected function setUp(): void
     {
-        Capsule::table('models')->truncate();
+        $this->setUpDatabase();
+        // Capsule::table('models')->truncate();
         Model::unguard();
 
         $this->now = Carbon::now();
